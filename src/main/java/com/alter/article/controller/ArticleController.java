@@ -22,19 +22,22 @@ public class ArticleController {
 
     private final ArticleRepository     articleRepository;
     private final SubCategoryRepository subCategoryRepository;
-
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper          objectMapper;
 
 
     // 본문 데이터를 일정크기로 짤라서 보내도록 수정해야함.
     @GetMapping("/{subCategory}")
     public List<ResponseArticle> getArticles (@PathVariable("subCategory") final String subCategory) {
         SubCategory findSubCategory = subCategoryRepository.findById(subCategory).orElseThrow();
-        return articleRepository.findAllBySubCategory(findSubCategory).stream().map(result -> {
-            ResponseArticle article = objectMapper.convertValue(result.getAi(), ResponseArticle.class);
-            return new ResponseArticle(article.title(), article.content(), result.getCreated());
-        }).toList();
+        return articleRepository
+                .findAllBySubCategory(findSubCategory)
+                .stream().map(result -> {
+                    ResponseArticle article = objectMapper.convertValue(result.getAi(), ResponseArticle.class);
+                    return new ResponseArticle(article.title(), article.content(), result.getCreated());
+                })
+                .toList();
     }
+
 
     @GetMapping("/{subCategory}/{articleId}")
     public ResponseArticle getArticleDetail (@PathVariable("subCategory") final String subCategory,
